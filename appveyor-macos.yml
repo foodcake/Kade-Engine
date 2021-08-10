@@ -33,12 +33,12 @@ install:
   - haxelib install linc_luajit
   - haxelib install actuate
   - haxelib list
-  - cd /Users/appveyor/projects/kade-engine-macos
+  - cd /Users/appveyor/projects/week7-js-port-macos
 
 build_script:
   - haxelib run lime build mac
 after_build:
-  - hdiutil create /Users/appveyor/temp.dmg -ov -volname "KadeEngine-macOS" -fs HFS+ -srcfolder "/Users/appveyor/projects/kade-engine-macos/export/release/macos/bin"
+  - hdiutil create /Users/appveyor/temp.dmg -ov -volname "KadeEngine-macOS" -fs HFS+ -srcfolder "/Users/appveyor/projects/week7-js-port-macos/export/release/macos/bin"
   - hdiutil convert /Users/appveyor/temp.dmg -format UDZO -o KadeEngine-macOS.dmg
 
 artifacts:

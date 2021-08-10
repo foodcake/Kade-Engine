@@ -33,13 +33,13 @@ install:
   - haxelib install linc_luajit
   - haxelib install actuate
   - haxelib list
-  - cd /home/appveyor/projects/kade-engine-linux
+  - cd /home/appveyor/projects/week7-js-port-linux
 
 build_script:
   - haxelib run lime build linux
 
 after_build:
-  - tar -cvf KadeEngine-Linux.tar -C /home/appveyor/projects/kade-engine-linux/export/release/linux/bin .
+  - tar -cvf KadeEngine-Linux.tar -C /home/appveyor/projects/week7-js-port-linux/export/release/linux/bin .
 
 artifacts:
 - path: KadeEngine-Linux.tar
