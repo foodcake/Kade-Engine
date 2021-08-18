@@ -1,23 +1,24 @@
 package;
 
-import flixel.addons.effects.FlxSkewedSprite;
+import PlayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.effects.FlxSkewedSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
+
+using StringTools;
+
 #if polymod
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
-import PlayState;
-
-using StringTools;
 
 class Note extends FlxSprite
 {
 	public var strumTime:Float = 0;
 	public var baseStrum:Float = 0;
-	
+
 	public var rStrumTime:Float = 0;
 
 	public var mustPress:Bool = false;
@@ -26,6 +27,7 @@ class Note extends FlxSprite
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
+	public var altNote:Bool = false;
 	public var prevNote:Note;
 	public var modifiedByLua:Bool = false;
 	public var sustainLength:Float = 0;
@@ -92,15 +94,14 @@ class Note extends FlxSprite
 			#end
 		}
 
-
-		if (this.strumTime < 0 )
+		if (this.strumTime < 0)
 			this.strumTime = 0;
 
 		this.noteData = noteData;
 
 		var daStage:String = PlayState.curStage;
 
-		//defaults if no noteStyle was found in chart
+		// defaults if no noteStyle was found in chart
 		var noteTypeCheck:String = 'normal';
 
 		if (inCharter)
@@ -116,17 +117,26 @@ class Note extends FlxSprite
 
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
-			if(FlxG.save.data.antialiasing)
-				{
-					antialiasing = true;
-				}
+			if (FlxG.save.data.antialiasing)
+			{
+				antialiasing = true;
+			}
 		}
 		else
 		{
-			if (PlayState.SONG.noteStyle == null) {
-				switch(PlayState.storyWeek) {case 6: noteTypeCheck = 'pixel';}
-			} else {noteTypeCheck = PlayState.SONG.noteStyle;}
-			
+			if (PlayState.SONG.noteStyle == null)
+			{
+				switch (PlayState.storyWeek)
+				{
+					case 6:
+						noteTypeCheck = 'pixel';
+				}
+			}
+			else
+			{
+				noteTypeCheck = PlayState.SONG.noteStyle;
+			}
+
 			switch (noteTypeCheck)
 			{
 				case 'pixel':
@@ -148,18 +158,18 @@ class Note extends FlxSprite
 
 					for (i in 0...4)
 					{
-						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
-						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
-						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' instance 1'); // Normal notes
+						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold piece instance 1'); // Hold
+						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' hold end instance 1'); // Tails
 					}
 
 					setGraphicSize(Std.int(width * 0.7));
 					updateHitbox();
-					
-					if(FlxG.save.data.antialiasing)
-						{
-							antialiasing = true;
-						}
+
+					if (FlxG.save.data.antialiasing)
+					{
+						antialiasing = true;
+					}
 			}
 		}
 
@@ -173,7 +183,7 @@ class Note extends FlxSprite
 
 			// I give up on fluctuating bpms. something has to be subtracted from strumCheck to make them look right but idk what.
 			// I'd use the note's section's start time but neither the note's section nor its start time are accessible by themselves
-			//strumCheck -= ???
+			// strumCheck -= ???
 
 			var ind:Int = Std.int(Math.round(strumCheck / (Conductor.stepCrochet / 2)));
 
@@ -185,15 +195,16 @@ class Note extends FlxSprite
 			localAngle += arrowAngles[noteData];
 			originColor = col;
 		}
-		
+
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
 		// then what is this lol
-		if (FlxG.save.data.downscroll && sustainNote) 
+		if (FlxG.save.data.downscroll && sustainNote)
 			flipY = true;
 
-		var stepHeight = (0.45 * Conductor.stepCrochet * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed, 2));
+		var stepHeight = (0.45 * Conductor.stepCrochet * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
+			2));
 
 		if (isSustainNote && prevNote != null)
 		{
@@ -202,14 +213,14 @@ class Note extends FlxSprite
 
 			x += width / 2;
 
-			originColor = prevNote.originColor; 
+			originColor = prevNote.originColor;
 
 			animation.play(dataColor[originColor] + 'holdend'); // This works both for normal colors and quantization colors
 			updateHitbox();
 
 			x -= width / 2;
 
-			//if (noteTypeCheck == 'pixel')
+			// if (noteTypeCheck == 'pixel')
 			//	x += 30;
 			if (inCharter)
 				x += 30;

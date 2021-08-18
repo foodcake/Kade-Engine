@@ -8,14 +8,6 @@
 				"kind": "build",
 				"isDefault": true
 			}
-		},
-		{
-			"type": "lime",
-			"command": "build",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
 		}
 	]
 }

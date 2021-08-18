@@ -19,6 +19,7 @@ import webm.WebmPlayer;
 #end
 import flixel.input.keyboard.FlxKey;
 import haxe.Exception;
+import flixel.math.FlxRandom;
 import openfl.geom.Matrix;
 import openfl.display.BitmapData;
 import openfl.utils.AssetType;
@@ -192,7 +193,7 @@ class PlayState extends MusicBeatState
 	var notesHitArray:Array<Date> = [];
 	var currentFrames:Int = 0;
 	var idleToBeat:Bool = true; // change if bf and dad would idle to the beat of the song
-	var idleBeat:Int = 4; // how frequently bf and dad would play their idle animation(1 - every beat, 2 - every 2 beats and so on)
+	var idleBeat:Int = 2; // how frequently bf and dad would play their idle animation(1 - every beat, 2 - every 2 beats and so on)
 
 	public var dialogue:Array<String> = ['dad:blah blah blah', 'bf:coolswag'];
 
@@ -251,6 +252,9 @@ class PlayState extends MusicBeatState
 	// Per song additive offset
 	public static var songOffset:Float = 0;
 
+	// Note splash shit
+	var grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
+
 	// BotPlay text
 	private var botPlayState:FlxText;
 	// Replay shit
@@ -264,6 +268,7 @@ class PlayState extends MusicBeatState
 
 	// Animation common suffixes
 	private var dataSuffix:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+	private var dataInstance:Array<String> = ['1', '2', '4', '3'];
 	private var dataColor:Array<String> = ['purple', 'blue', 'green', 'red'];
 
 	public static var startTime = 0.0;
@@ -396,6 +401,9 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camSustains);
 		FlxG.cameras.add(camNotes);
+		var tempNoteSplash = new NoteSplash(0, 0, 0);
+		grpNoteSplashes.add(tempNoteSplash);
+		tempNoteSplash.alpha = 0.1;
 
 		FlxCamera.defaultCameras = [camGame];
 
@@ -944,6 +952,11 @@ class PlayState extends MusicBeatState
 					gfCheck = 'gf-christmas';
 				case 6:
 					gfCheck = 'gf-pixel';
+				case 7:
+					if(curSong.toLowerCase() == 'stress')
+						gfCheck = 'pico-speaker';
+					else
+						gfCheck = 'gf-tankmen';
 			}
 		}
 		else
@@ -960,6 +973,10 @@ class PlayState extends MusicBeatState
 				curGf = 'gf-christmas';
 			case 'gf-pixel':
 				curGf = 'gf-pixel';
+			case 'gf-tankmen':
+				curGf = 'gf-tankmen';	
+			case 'pico-speaker':
+				curGf = 'pico-speaker';
 			default:
 				curGf = 'gf';
 		}
@@ -1097,6 +1114,7 @@ class PlayState extends MusicBeatState
 
 		strumLineNotes = new FlxTypedGroup<FlxSprite>();
 		add(strumLineNotes);
+		add(grpNoteSplashes);
 
 		playerStrums = new FlxTypedGroup<FlxSprite>();
 		cpuStrums = new FlxTypedGroup<FlxSprite>();
@@ -1230,6 +1248,7 @@ class PlayState extends MusicBeatState
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
 
+		grpNoteSplashes.cameras = [camHUD];
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
@@ -1943,6 +1962,7 @@ class PlayState extends MusicBeatState
 					continue;
 
 				swagNote.sustainLength = songNotes[2];
+				swagNote.altNote = songNotes[3];
 				swagNote.scrollFactor.set(0, 0);
 
 				var susLength:Float = swagNote.sustainLength;
@@ -2066,14 +2086,15 @@ class PlayState extends MusicBeatState
 					babyArrow.frames = Paths.getSparrowAtlas('NOTE_assets');
 					for (j in 0...4)
 					{
-						babyArrow.animation.addByPrefix(dataColor[j], 'arrow' + dataSuffix[j]);	
+						babyArrow.animation.addByPrefix(dataColor[j], 'arrow static instance ' + dataInstance[j]);	
 					}
 
-					var lowerDir:String = dataSuffix[i].toLowerCase();
+					var lowerDir:String = dataInstance[i].toLowerCase();
+					var lowerVir:String = dataSuffix[i].toLowerCase();
 
-					babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
-					babyArrow.animation.addByPrefix('pressed', lowerDir + ' press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', lowerDir + ' confirm', 24, false);
+					babyArrow.animation.addByPrefix('static', 'arrow static instance ' + dataInstance[i]);
+					babyArrow.animation.addByPrefix('pressed', lowerVir + ' press instance 1', 24, false);
+					babyArrow.animation.addByPrefix('confirm', lowerVir + ' confirm instance 1', 24, false);	
 
 					babyArrow.x += Note.swagWidth * i;
 
@@ -2132,7 +2153,7 @@ class PlayState extends MusicBeatState
 
 	function tweenCamIn():Void
 	{
-		FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
+		FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 2 / 1000), {ease: FlxEase.elasticInOut});
 	}
 
 	override function openSubState(SubState:FlxSubState)
@@ -3045,7 +3066,7 @@ class PlayState extends MusicBeatState
 
 					if (SONG.notes[Math.floor(curStep / 16)] != null)
 					{
-						if (SONG.notes[Math.floor(curStep / 16)].altAnim)
+						if (SONG.notes[Math.floor(curStep / 16)].altAnim || daNote.altNote)
 							altAnim = '-alt';
 					}
 					
@@ -3338,6 +3359,14 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
+						if (curSong.toLowerCase() == 'ugh')
+						{
+							LoadingState.loadAndSwitchState(new VideoState('assets/videos/gunsCutscene.webm', new PlayState()), true);
+						}
+						if (curSong.toLowerCase() ==  'guns')
+						{
+							LoadingState.loadAndSwitchState(new VideoState('assets/videos/stressCutscene.webm', new PlayState()), true);
+						}
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 						Conductor.changeBPM(102);
 						FlxG.switchState(new StoryMenuState());
@@ -3478,11 +3507,17 @@ class PlayState extends MusicBeatState
 				if (FlxG.save.data.accuracyMod == 0)
 					totalNotesHit += 0.75;
 			case 'sick':
+			{
 				if (health < 2)
 					health += 0.04;
 				if (FlxG.save.data.accuracyMod == 0)
 					totalNotesHit += 1;
+
+				var bruhSplash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
+				bruhSplash.setupNoteSplash(daNote.noteData, daNote.x, strumLine.y);
+				grpNoteSplashes.add(bruhSplash);
 				sicks++;
+			}
 		}
 
 
