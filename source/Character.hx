@@ -11,6 +11,7 @@ class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
+	public var animationNotes:Array<String> = [];
 
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
@@ -232,6 +233,7 @@ class Character extends FlxSprite
 				loadOffsetFile(curCharacter);
 
 				playAnim('shoot1');
+				// loadMappedAnims();
 
 			case 'tankman':
 				var tex = Paths.getSparrowAtlas('tankmanCaptain', 'shared', true);
@@ -598,7 +600,28 @@ class Character extends FlxSprite
 			}
 		}
 	}
+	// public function loadMappedAnims()
+	// {
+	// 	// todo, make better
+	// 	var picoAnims = Song.loadFromJson('picospeaker', "stress").notes;
+	// 	for (anim in picoAnims)
+	// 	{
+	// 		// this code looks fucking awful because I am reading the compiled
+	// 		// html build
+	// 		for (note in anim.sectionNotes)
+	// 		{
+	// 			animationNotes.push(note);
+	// 		}
+	// 	}
+	// 	animationNotes.sort(sortAnims);
+	// }
 
+	function sortAnims(a, b)
+	{
+		var aThing = a[0];
+		var bThing = b[0];
+		return aThing < bThing ? -1 : 1;
+	}
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
 		animOffsets[name] = [x, y];

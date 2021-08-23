@@ -8761,32 +8761,42 @@ $jscomp.polyfill(
                             M.curStage = "tank";
                             c = new R("tankSky", -400, -400, 0, 0);
                             this.add(c);
+
                             b = new R("tankClouds", k.random.int(-700, -100), k.random.int(-20, 20), 0.1, 0.1);
                             b.set_active(!0);
                             b.velocity.set_x(k.random.float(5, 15));
                             this.add(b);
+
                             b = new R("tankMountains", -300, -20, 0.2, 0.2);
                             b.setGraphicSize((1.2 * b.get_width()) | 0);
                             b.updateHitbox();
                             this.add(b);
+
                             b = new R("tankBuildings", -200, 0, 0.3, 0.3);
                             b.setGraphicSize((1.1 * b.get_width()) | 0);
                             b.updateHitbox();
                             this.add(b);
+
                             b = new R("tankRuins", -200, 0, 0.35, 0.35);
                             b.setGraphicSize((1.1 * b.get_width()) | 0);
                             b.updateHitbox();
                             this.add(b);
+
                             b = new R("smokeLeft", -200, -100, 0.4, 0.4, ["SmokeBlurLeft"], !0);
                             this.add(b);
+
                             b = new R("smokeRight", 1100, -100, 0.4, 0.4, ["SmokeRight"], !0);
                             this.add(b);
+
                             this.tankWatchtower = new R("tankWatchtower", 100, 50, 0.5, 0.5, ["watchtower gradient color"]);
                             this.add(this.tankWatchtower);
+
                             this.tankGround = new R("tankRolling", 300, 300, 0.5, 0.5, ["BG tank w lighting"], !0);
                             this.add(this.tankGround);
+
                             this.tankmanRun = new D();
                             this.add(this.tankmanRun);
+                            
                             b = new R("tankGround", -420, -150);
                             b.setGraphicSize((1.15 * b.get_width()) | 0);
                             b.updateHitbox();

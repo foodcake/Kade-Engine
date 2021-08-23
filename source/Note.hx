@@ -110,9 +110,9 @@ class Note extends FlxSprite
 
 			for (i in 0...4)
 			{
-				animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
-				animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
-				animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+				animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' instance 1'); // Normal notes
+				animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold piece instance 1'); // Hold
+				animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' hold end instance 1'); // Tails
 			}
 
 			setGraphicSize(Std.int(width * 0.7));
