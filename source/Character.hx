@@ -616,6 +616,34 @@ class Character extends FlxSprite
 	// 	animationNotes.sort(sortAnims);
 	// }
 
+	// loadMappedAnims:function()
+	// {
+	// 	for (var a = me.loadFromJson("picospeaker", "stress").notes, b = 0;
+	// 	b < a.length;
+	// )
+	// 	{
+	// 		var c = a[b];
+	// 		++b;
+	// 		var d = 0;
+	// 		for (c = c.sectionNotes;
+	// 		d < c.length;
+	// 	)
+	// 		{
+	// 			var e = c[d];
+	// 			++d;
+	// 			this.animationNotes.push(e);
+	// 		}
+	// 	}
+	// 	xf.animationNotes = this.animationNotes;
+	// 	Ma.trace(this.animationNotes, {
+	// 		fileName: "source/Character.hx",
+	// 		lineNumber: 534,
+	// 		className: "Character",
+	// 		methodName: "loadMappedAnims"
+	// 	});
+	// 	this.animationNotes.sort(n(this, this.sortAnims));
+	// }
+
 	function sortAnims(a, b)
 	{
 		var aThing = a[0];

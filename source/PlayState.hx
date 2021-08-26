@@ -41,6 +41,7 @@ import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.group.FlxSpriteGroup;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.addons.display.FlxGridOverlay;
@@ -91,6 +92,7 @@ class PlayState extends MusicBeatState
 	public static var isStoryMode:Bool = false;
 	public static var storyWeek:Int = 0;
 	public static var storyPlaylist:Array<String> = [];
+	public static var xf:Array<String> = [];
 	public static var storyDifficulty:Int = 1;
 	public static var weekSong:Int = 0;
 	public static var weekScore:Int = 0;
@@ -214,6 +216,9 @@ class PlayState extends MusicBeatState
 	var bottomBoppers:FlxSprite;
 	var santa:FlxSprite;
 	var tankWatchtower:FlxSprite;
+	var smokeLeft:FlxSprite;
+	var smokeRight:FlxSprite;
+	var tankRolling:FlxSprite;
 	var tank0:FlxSprite;
 	var tank1:FlxSprite;
 	var tank2:FlxSprite;
@@ -940,7 +945,6 @@ class PlayState extends MusicBeatState
 						tankMountains.setGraphicSize(Std.int(tankMountains.width * 1.2));
 						tankMountains.updateHitbox();
 						
-
 						add(tankMountains);
 
 						var tankBuildings = new FlxSprite().loadGraphic(Paths.image('tank/tankBuildings', 'week7'));
@@ -949,8 +953,6 @@ class PlayState extends MusicBeatState
 						tankBuildings.y = 0;
 						tankBuildings.setGraphicSize(Std.int(tankBuildings.width * 1.1));
 						tankBuildings.updateHitbox();
-
-
 
 						add(tankBuildings);
 
@@ -963,17 +965,17 @@ class PlayState extends MusicBeatState
 
 						add(tankRuins);
 						
-						var smokeLeft = new FlxSprite().loadGraphic(Paths.image('tank/smokeLeft', 'week7'));
+						smokeLeft = new FlxSprite(-200, -100);
+						smokeLeft.frames = Paths.getSparrowAtlas('tank/smokeLeft', 'week7');
+						smokeLeft.animation.addByPrefix('smokeLeft', 'SmokeBlurLeft instance 1', 24, false);
 						smokeLeft.scrollFactor.set(0.4, 0.4);
-						smokeLeft.x = -200;
-						smokeLeft.y = -100;
 
 						add(smokeLeft);
 
-						var smokeRight = new FlxSprite().loadGraphic(Paths.image('tank/smokeRight', 'week7'));
+						smokeRight = new FlxSprite(1100, -100);
+						smokeRight.frames = Paths.getSparrowAtlas('tank/smokeRight', 'week7');
+						smokeRight.animation.addByPrefix('smokeRight', 'SmokeRight instance 1', 24, false);
 						smokeRight.scrollFactor.set(0.4, 0.4);
-						smokeRight.x = 1100;
-						smokeRight.y = -100;
 
 						add(smokeRight);
 
@@ -988,8 +990,26 @@ class PlayState extends MusicBeatState
 
 						add(tankWatchtower);
 
-						// this.tankGround = new R("tankRolling", 300, 300, 0.5, 0.5, ["BG tank w lighting"], !0);
-						// this.add(this.tankGround);
+						tankRolling = new FlxSprite(300, 300);
+						// .loadGraphic(Paths.image('tank/tankRolling', 'week7'), true);
+						tankRolling.frames = Paths.getSparrowAtlas('tank/tankRolling', 'week7');
+						tankRolling.animation.addByPrefix('tankRolling', 'BG tank w lighting instance 1', 24, true);
+
+						tankRolling.scrollFactor.set(0.5, 0.5);
+						if (FlxG.save.data.antialiasing)
+						{
+							tankRolling.antialiasing = true;
+						}
+
+						add(tankRolling);
+						moveTank();
+
+						phillyTrain = new FlxSprite(2000, 360).loadGraphic(Paths.image('philly/train', 'week3'));
+						if (FlxG.save.data.distractions)
+						{
+							add(phillyTrain);
+						}
+
 
 						// this.tankmanRun = new D();
 						// this.add(this.tankmanRun);
@@ -1002,8 +1022,6 @@ class PlayState extends MusicBeatState
 
 						add(tankGround);
 
-						// this.moveTank();
-
 						tank0 = new FlxSprite(-500, 650);
 						tank0.frames = Paths.getSparrowAtlas('tank/tank0', 'week7');
 						tank0.animation.addByPrefix('bop', "fg tankhead far right instance 1", 24, false);
@@ -1012,8 +1030,6 @@ class PlayState extends MusicBeatState
 							tank0.antialiasing = true;
 						}
 						tank0.scrollFactor.set(1.7, 1.5);
-
-						add(tank0);
 
 						tank1 = new FlxSprite(-300, 750);
 						tank1.frames = Paths.getSparrowAtlas('tank/tank1', 'week7');
@@ -1024,8 +1040,6 @@ class PlayState extends MusicBeatState
 						}
 						tank1.scrollFactor.set(2, 0.2);
 
-						add(tank1);
-
 						tank2 = new FlxSprite(450, 940);
 						tank2.frames = Paths.getSparrowAtlas('tank/tank2', 'week7');
 						tank2.animation.addByPrefix('bop', "foreground man 3 instance 1", 24, false);
@@ -1034,8 +1048,6 @@ class PlayState extends MusicBeatState
 							tank2.antialiasing = true;
 						}
 						tank2.scrollFactor.set(1.5, 1.5);
-
-						add(tank2);
 
 						tank4 = new FlxSprite(1300, 900);
 						tank4.frames = Paths.getSparrowAtlas('tank/tank4', 'week7');
@@ -1046,8 +1058,6 @@ class PlayState extends MusicBeatState
 						}
 						tank4.scrollFactor.set(1.5, 1.5);
 
-						add(tank4);
-
 						tank5 = new FlxSprite(1620, 700);
 						tank5.frames = Paths.getSparrowAtlas('tank/tank5', 'week7');
 						tank5.animation.addByPrefix('bop', "fg tankhead far right instance 1", 24, false);
@@ -1057,8 +1067,6 @@ class PlayState extends MusicBeatState
 						}
 						tank5.scrollFactor.set(1.5, 1.5);
 
-						add(tank5);
-
 						tank3 = new FlxSprite(1300, 1200);
 						tank3.frames = Paths.getSparrowAtlas('tank/tank3', 'week7');
 						tank3.animation.addByPrefix('bop', "fg tankhead 4 instance 1", 24, false);
@@ -1067,8 +1075,6 @@ class PlayState extends MusicBeatState
 							tank3.antialiasing = true;
 						}
 						tank3.scrollFactor.set(3.5, 2.5);
-
-						add(tank3);
 
 					}
 				default:
@@ -1264,10 +1270,23 @@ class PlayState extends MusicBeatState
 
 			// Shitty layering but whatev it works LOL
 			if (curStage == 'limo')
+			{
 				add(limo);
+				add(dad);
+				add(boyfriend);
+			}
 
-			add(dad);
-			add(boyfriend);
+			if (curStage == 'tank')
+			{
+				add(dad);
+				add(boyfriend);
+				add(tank0);
+				add(tank1);
+				add(tank2);
+				add(tank4);
+				add(tank5);
+				add(tank3);
+			}
 		}
 
 		if (loadRep)
@@ -2629,6 +2648,8 @@ class PlayState extends MusicBeatState
 						trainFrameTiming = 0;
 					}
 				}
+			case 'tank':
+				moveTank();
 				// phillyCityLights.members[curLight].alpha -= (Conductor.crochet / 1000) * FlxG.elapsed;
 		}
 
@@ -4549,6 +4570,22 @@ class PlayState extends MusicBeatState
 	var trainCars:Int = 8;
 	var trainFinishing:Bool = false;
 	var trainCooldown:Int = 0;
+	var tankX = 400;
+	var tankSpeed = Random.float(5, 7);
+	var tankAngle = Random.float(-90, 45);
+	
+
+	function moveTank()
+	{
+		if (!inCutscene && songStarted)
+		{
+			Math.round(tankAngle);
+			(tankAngle += FlxG.elapsed * tankSpeed);
+			tankRolling.angle = (tankAngle - 90 + 15);
+			tankRolling.x = (tankX + 1500 * Math.cos((Math.PI / 180) * (1 * tankAngle + 180)));
+			tankRolling.y = (1300 + 1100 * Math.sin((Math.PI / 180) * (1 * tankAngle + 180)));
+		}
+	}
 
 	function trainStart():Void
 	{
@@ -4780,6 +4817,9 @@ class PlayState extends MusicBeatState
 					tank3.animation.play('bop', true);
 					tank4.animation.play('bop', true);
 					tank5.animation.play('bop', true);
+					smokeRight.animation.play('smokeRight', true);
+					smokeLeft.animation.play('smokeLeft', true);
+					tankRolling.animation.play('tankRolling', true);
 				}
 
 			case 'limo':
