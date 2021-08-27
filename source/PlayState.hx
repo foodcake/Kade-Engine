@@ -225,6 +225,7 @@ class PlayState extends MusicBeatState
 	var tank3:FlxSprite;
 	var tank4:FlxSprite;
 	var tank5:FlxSprite;
+	var video:MP4Handler = new MP4Handler();
 
 	var fc:Bool = true;
 
@@ -967,17 +968,19 @@ class PlayState extends MusicBeatState
 						
 						smokeLeft = new FlxSprite(-200, -100);
 						smokeLeft.frames = Paths.getSparrowAtlas('tank/smokeLeft', 'week7');
-						smokeLeft.animation.addByPrefix('smokeLeft', 'SmokeBlurLeft instance 1', 24, false);
+						smokeLeft.animation.addByPrefix('smokeLeft', 'SmokeBlurLeft instance 1', 24, true);
 						smokeLeft.scrollFactor.set(0.4, 0.4);
 
 						add(smokeLeft);
+						smokeLeft.animation.play('smokeLeft', true);
 
 						smokeRight = new FlxSprite(1100, -100);
 						smokeRight.frames = Paths.getSparrowAtlas('tank/smokeRight', 'week7');
-						smokeRight.animation.addByPrefix('smokeRight', 'SmokeRight instance 1', 24, false);
+						smokeRight.animation.addByPrefix('smokeRight', 'SmokeRight instance 1', 24, true);
 						smokeRight.scrollFactor.set(0.4, 0.4);
 
 						add(smokeRight);
+						smokeRight.animation.play('smokeRight', true);
 
 						tankWatchtower = new FlxSprite(100, 50);
 						tankWatchtower.frames = Paths.getSparrowAtlas('tank/tankWatchtower', 'week7');
@@ -990,7 +993,7 @@ class PlayState extends MusicBeatState
 
 						add(tankWatchtower);
 
-						tankRolling = new FlxSprite(300, 300);
+						tankRolling = new FlxSprite(-3000, -3000);
 						// .loadGraphic(Paths.image('tank/tankRolling', 'week7'), true);
 						tankRolling.frames = Paths.getSparrowAtlas('tank/tankRolling', 'week7');
 						tankRolling.animation.addByPrefix('tankRolling', 'BG tank w lighting instance 1', 24, true);
@@ -1129,7 +1132,7 @@ class PlayState extends MusicBeatState
 				case 6:
 					gfCheck = 'gf-pixel';
 				case 7:
-					if(curSong.toLowerCase() == 'stress')
+					if(SONG.song.toLowerCase() == 'stress')
 						gfCheck = 'pico-speaker';
 					else
 						gfCheck = 'gf-tankmen';
@@ -1252,15 +1255,17 @@ class PlayState extends MusicBeatState
 				boyfriend.x += 40;
 				dad.x -= 80;
 				dad.y += 60;
-				if (StringTools.contains(curGf, 'pico'))
+				if (SONG.song.toLowerCase() == 'stress')
 				{
-					gf.x -= 170;
-					gf.y -= 75;
+					//x positive is right
+					//y positive is down???
+					gf.x -= 80;
+					gf.y -= 187;
 				}
 				else
 				{
 				gf.x -= 200;
-				gf.y -= 67;
+				gf.y -= 64;
 				}
 		}
 
@@ -3567,14 +3572,6 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
-						if (curSong.toLowerCase() == 'ugh')
-						{
-							LoadingState.loadAndSwitchState(new VideoState('assets/videos/gunsCutscene.webm', new PlayState()), true);
-						}
-						if (curSong.toLowerCase() ==  'guns')
-						{
-							LoadingState.loadAndSwitchState(new VideoState('assets/videos/stressCutscene.webm', new PlayState()), true);
-						}
 						FlxG.sound.playMusic(Paths.music('freakyMenu'));
 						Conductor.changeBPM(102);
 						FlxG.switchState(new StoryMenuState());
@@ -3631,7 +3628,25 @@ class PlayState extends MusicBeatState
 					PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 					FlxG.sound.music.stop();
 
-					LoadingState.loadAndSwitchState(new PlayState());
+					switch (SONG.song.toLowerCase())
+					{
+						case 'guns':
+							var sprite:FlxSprite = new FlxSprite(0, 0);
+
+							var video:MP4Handler = new MP4Handler();
+							video.playMP4(Paths.video('gunsCutscene'), null, sprite); // make the transition null so it doesn't take you out of this state
+
+							add(sprite);
+						case 'stress':
+							var sprite:FlxSprite = new FlxSprite(0, 0);
+
+							var video:MP4Handler = new MP4Handler();
+							video.playMP4(Paths.video('stressCutscene'), null, sprite); // make the transition null so it doesn't take you out of this state
+
+							add(sprite);
+						default:
+							LoadingState.loadAndSwitchState(new PlayState());
+					}	
 				}
 			}
 			else
@@ -4817,8 +4832,6 @@ class PlayState extends MusicBeatState
 					tank3.animation.play('bop', true);
 					tank4.animation.play('bop', true);
 					tank5.animation.play('bop', true);
-					smokeRight.animation.play('smokeRight', true);
-					smokeLeft.animation.play('smokeLeft', true);
 					tankRolling.animation.play('tankRolling', true);
 				}
 

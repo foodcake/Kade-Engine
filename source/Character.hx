@@ -11,7 +11,8 @@ class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
-	public var animationNotes:Array<String> = [];
+	public var animationNotes:Array<Dynamic> = [];
+	public var hasGun:Bool = false;
 
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
@@ -233,7 +234,7 @@ class Character extends FlxSprite
 				loadOffsetFile(curCharacter);
 
 				playAnim('shoot1');
-				// loadMappedAnims();
+				loadMappedAnims();
 
 			case 'tankman':
 				var tex = Paths.getSparrowAtlas('tankmanCaptain', 'shared', true);
@@ -526,6 +527,24 @@ class Character extends FlxSprite
 			case 'gf':
 				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
 					playAnim('danceRight');
+			case 'pico-speaker':
+				if (0 < animationNotes.length && Conductor.songPosition > animationNotes[0][0])
+				{
+					var idkWhatThisISLol = 1;
+					if (2 <= animationNotes[0][1])
+					{
+						idkWhatThisISLol = 3;
+					}
+
+					idkWhatThisISLol += FlxG.random.int(0, 1);
+					playAnim("shoot" + idkWhatThisISLol, true);
+					animationNotes.shift();
+				}
+				if (animation.curAnim != null && animation.curAnim.finished)
+				{
+					playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
+				}
+
 		}
 
 		super.update(elapsed);
@@ -600,49 +619,22 @@ class Character extends FlxSprite
 			}
 		}
 	}
-	// public function loadMappedAnims()
-	// {
-	// 	// todo, make better
-	// 	var picoAnims = Song.loadFromJson('picospeaker', "stress").notes;
-	// 	for (anim in picoAnims)
-	// 	{
-	// 		// this code looks fucking awful because I am reading the compiled
-	// 		// html build
-	// 		for (note in anim.sectionNotes)
-	// 		{
-	// 			animationNotes.push(note);
-	// 		}
-	// 	}
-	// 	animationNotes.sort(sortAnims);
-	// }
 
-	// loadMappedAnims:function()
-	// {
-	// 	for (var a = me.loadFromJson("picospeaker", "stress").notes, b = 0;
-	// 	b < a.length;
-	// )
-	// 	{
-	// 		var c = a[b];
-	// 		++b;
-	// 		var d = 0;
-	// 		for (c = c.sectionNotes;
-	// 		d < c.length;
-	// 	)
-	// 		{
-	// 			var e = c[d];
-	// 			++d;
-	// 			this.animationNotes.push(e);
-	// 		}
-	// 	}
-	// 	xf.animationNotes = this.animationNotes;
-	// 	Ma.trace(this.animationNotes, {
-	// 		fileName: "source/Character.hx",
-	// 		lineNumber: 534,
-	// 		className: "Character",
-	// 		methodName: "loadMappedAnims"
-	// 	});
-	// 	this.animationNotes.sort(n(this, this.sortAnims));
-	// }
+	public function loadMappedAnims()
+	{
+		// todo, make better
+		var picoAnims = Song.loadFromJson('picospeaker', "stress").notes;
+		for (anim in picoAnims)
+		{
+			// this code looks fucking awful because I am reading the compiled
+			// html build
+			for (note in anim.sectionNotes)
+			{
+				animationNotes.push(note);
+			}
+		}
+		animationNotes.sort(sortAnims);
+	}
 
 	function sortAnims(a, b)
 	{

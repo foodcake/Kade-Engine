@@ -69,6 +69,7 @@ class StoryMenuState extends MusicBeatState
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
+	var isCutscene:Bool = false;
 
 	function unlockWeeks():Array<Bool>
 	{
@@ -380,17 +381,23 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
-			new FlxTimer().start(1, function(tmr:FlxTimer)
+			var video:MP4Handler = new MP4Handler();
+
+			if (curWeek == 7 && !isCutscene) // Checks if the current week is Tutorial.
 			{
-				if (curWeek == 7)
+				video.playMP4(Paths.video('ughCutscene'), new PlayState());
+				isCutscene = true;
+			}
+			else
+			{
+				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
-					LoadingState.loadAndSwitchState(new VideoState('assets/videos/ughCutscene.webm', new PlayState()), true);
-				}
-				else
-				{
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-				}
-			});
+					if (isCutscene)
+						video.onVLCComplete();
+
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+				});
+			}
 		}
 	}
 
